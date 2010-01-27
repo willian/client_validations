@@ -1,0 +1,63 @@
+h2. Dependencies
+
+To use this plugin, you first need to download the Validation Reflection plugin:
+
+<pre><code>script/plugin install git://github.com/redinger/validation_reflection.git</code></pre>
+
+And you need to download the jQuery and jQuery Validator:
+
+* http://code.jquery.com/jquery-latest.min.js
+* http://ajax.microsoft.com/ajax/jquery.validate/1.6/jquery.validate.min.js
+
+h2. Installation
+
+h3. as a Gem
+
+<pre><code>sudo gem install client-validations</code></pre>
+
+h3. as a Plugin
+
+<pre><code>script/plugin install git://github.com/willian/client_validations.git</code></pre>
+
+h2. Usage
+
+All you have to do is use the client_validations form_helper. Example:
+
+<pre><code><% form_for(@post) do |f| %>
+  <%= f.label :title %>
+  <%= f.text_field :title %>
+
+  <%= f.label :content %>
+  <%= f.text_area :content %>
+
+  <%= f.submit 'Create' %>
+
+  <%= f.client_validations %>
+<% end %></code></pre>
+
+h2. Maintainer
+
+Willian Fernandes (http://willianfernandes.com.br)
+
+h2. License
+
+Copyright (c) 2010 Willian Fernandes
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
