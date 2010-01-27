@@ -13,10 +13,6 @@ h2. Installation
 
 h3. as a Gem
 
-<pre><code>sudo gem install client-validations</code></pre>
-
-h3. as a Plugin
-
 <pre><code>script/plugin install git://github.com/willian/client_validations.git</code></pre>
 
 h2. Usage
