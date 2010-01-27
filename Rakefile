@@ -25,7 +25,7 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |gemspec|
-    gemspec.name = "client-validations"
+    gemspec.name = "client_validations"
     gemspec.summary = "Translates the validations of model to the jQuery Validator"
     gemspec.description = "Translates the validations of model to the jQuery Validator"
     gemspec.email = "willian@willianfernandes.com.br"
