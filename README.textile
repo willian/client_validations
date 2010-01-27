@@ -11,8 +11,6 @@ And you need to download the jQuery and jQuery Validator:
 
 h2. Installation
 
-h3. as a Gem
-
 <pre><code>script/plugin install git://github.com/willian/client_validations.git</code></pre>
 
 h2. Usage
