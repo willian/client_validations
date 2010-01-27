@@ -4,7 +4,7 @@ module ClientValidation
       if object.new_record?
         form_id = "new_#{object.class.to_s.downcase}"
       else
-        form_id = "edit_#{object.class.to_s.downcase}"
+        form_id = "edit_#{object.class.to_s.downcase}_#{object.to_param}"
       end
       declarations, validations = ClientValidation.current_adapter.render_script(object)
       js = <<-EOF
@@ -14,6 +14,8 @@ module ClientValidation
           messages: #{validations[:messages].to_json}
         });
       EOF
+
+      template ||= @template
 
       html = template.content_tag(:script, js, :type => "text/javascript")
       html.respond_to?(:html_safe!) ? html.html_safe! : html
