@@ -8,10 +8,12 @@ module ClientValidation
       end
       declarations, validations = ClientValidation.current_adapter.render_script(object)
       js = <<-EOF
-        #{declarations}
-        $('##{form_id}').validate({
-          rules: #{validations[:rules].to_json},
-          messages: #{validations[:messages].to_json}
+        $(function() {
+          #{declarations}
+          $('##{form_id}').validate({
+            rules: #{validations[:rules].to_json},
+            messages: #{validations[:messages].to_json}
+          });
         });
       EOF
 
