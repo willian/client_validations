@@ -25,13 +25,13 @@ module ClientValidation
         @klasses.each do |klass|
           @klass = klass
 
-          @klass.reflect_on_all_validations.each do |@v|
+          @klass.reflect_on_all_validations.each do |v|
             prefix = @klass.to_s.downcase
 
-            attribute_name = @v.name unless @v.macro == :validates_confirmation_of
-            attribute_name = "#{@v.name}_confirmation" if @v.macro == :validates_confirmation_of
+            attribute_name = v.name unless v.macro == :validates_confirmation_of
+            attribute_name = "#{v.name}_confirmation" if v.macro == :validates_confirmation_of
 
-            @translate_message_key = "#{prefix}.#{@v.name}"
+            @translate_message_key = "#{prefix}.#{v.name}"
 
             # debugger
             if object.class.to_s.downcase == prefix
@@ -47,11 +47,11 @@ module ClientValidation
             @messages[@field_name] = {} unless @messages[@field_name]
 
             # Set validation
-            unless @v.options[:allow_nil] && @v.options[:allow_blank]
+            unless v.options[:allow_nil] && v.options[:allow_blank]
               @validators[@field_name]['required'] = true
               @messages[@field_name]['required'] = ClientValidation::Util.message_for(@translate_message_key, :blank)
             end
-            eval("self.set_#{@v.macro.to_s}")
+            eval("self.set_#{v.macro.to_s}")
           end
         end
         [@declarations, {:rules => @validators, :messages => @messages}]
