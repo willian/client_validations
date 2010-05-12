@@ -20,7 +20,7 @@ module ClientValidation
         object.class.reflections.keys.uniq.each do |assoc_object|
           unless object.class.reflections[assoc_object].options.include?(:through)
             assoc_object = assoc_object.to_s
-            if assoc_object.to_s ~= /ss$/
+            if assoc_object.to_s =~ /ss$/
               assoc_object.to_s.camelize.constantize
             else
               assoc_object.to_s.camelize.singularize.constantize
@@ -41,7 +41,6 @@ module ClientValidation
 
             @translate_message_key = "#{prefix}.#{v.name}"
 
-            # debugger
             if object.class.to_s.downcase == prefix
               @field_name = "#{prefix}[#{attribute_name}]"
               @field_id = "#{prefix}_#{attribute_name}"
