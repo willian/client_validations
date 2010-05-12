@@ -20,10 +20,10 @@ module ClientValidation
         object.class.reflections.keys.uniq.each do |assoc_object|
           unless object.class.reflections[assoc_object].options.include?(:through)
             assoc_object = assoc_object.to_s
-            if assoc_object.to_s =~ /ss$/
-              assoc_object.to_s.camelize.constantize
+            if assoc_object =~ /ss$/
+              assoc_object = assoc_object.camelize.constantize
             else
-              assoc_object.to_s.camelize.singularize.constantize
+              assoc_object = assoc_object.camelize.singularize.constantize
             end
             @klasses << assoc_object
           end
