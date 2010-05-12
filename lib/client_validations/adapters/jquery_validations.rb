@@ -18,7 +18,15 @@ module ClientValidation
 
         # Discovering all models
         object.class.reflections.keys.uniq.each do |assoc_object|
-          @klasses << assoc_object.to_s.camelize.constantize unless object.class.reflections[assoc_object].options.include?(:through)
+          unless object.class.reflections[assoc_object].options.include?(:through)
+            assoc_object = assoc_object.to_s
+            if assoc_object.to_s ~= /ss$/
+              assoc_object.to_s.camelize.constantize
+            else
+              assoc_object.to_s.camelize.singularize.constantize
+            end
+            @klasses << assoc_object
+          end
         end
 
         # Gererating the jQuery Validator code
