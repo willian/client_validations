@@ -18,7 +18,7 @@ module ClientValidation
 
         # Discovering all models
         object.class.reflections.keys.uniq.each do |assoc_object|
-          @klasses << eval(assoc_object.to_s.classify) unless object.class.reflections[assoc_object].options.include?(:through)
+          @klasses << assoc_object.to_s.capitalize.constantize unless object.class.reflections[assoc_object].options.include?(:through)
         end
 
         # Gererating the jQuery Validator code
