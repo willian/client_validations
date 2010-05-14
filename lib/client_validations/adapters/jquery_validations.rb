@@ -34,21 +34,21 @@ module ClientValidation
           @klass = klass
 
           @klass.reflect_on_all_validations.each do |v|
-            prefix = @klass.to_s.downcase
+            prefix = @klass.model_name.singular
 
             attribute_name = v.name unless v.macro == :validates_confirmation_of
             attribute_name = "#{v.name}_confirmation" if v.macro == :validates_confirmation_of
 
             @translate_message_key = "#{prefix}.#{v.name}"
 
-            if object.class.to_s.downcase == prefix
+            if object.class.model_name.singular == prefix
               @field_name = "#{prefix}[#{attribute_name}]"
               @field_id = "#{prefix}_#{attribute_name}"
             else
               prefix = "#{prefix}_attributes"
 
-              @field_name = "#{object.class.to_s.downcase}[#{prefix}][#{attribute_name}]"
-              @field_id = "#{object.class.to_s.downcase}_#{prefix}_#{attribute_name}"
+              @field_name = "#{object.class.model_name.singular}[#{prefix}][#{attribute_name}]"
+              @field_id = "#{object.class.model_name.singular}_#{prefix}_#{attribute_name}"
             end
             @validators[@field_name] = {} unless @validators[@field_name]
             @messages[@field_name] = {} unless @messages[@field_name]
