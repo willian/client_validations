@@ -19,11 +19,26 @@ module ClientValidation
         # Discovering all models
         object.class.reflections.keys.uniq.each do |assoc_object|
           unless object.class.reflections[assoc_object].options.include?(:through)
-            assoc_object = assoc_object.to_s
-            if assoc_object =~ /ss$/
-              assoc_object = assoc_object.camelize.constantize
+            if object.class.reflections[assoc_object].options[:class_name]
+              assoc_object = {:class_name => object.class.reflections[assoc_object].options[:class_name], :object_name => assoc_object.to_s}
             else
-              assoc_object = assoc_object.camelize.singularize.constantize
+              assoc_object = assoc_object.to_s
+            end
+
+            if assoc_object.is_a?(Hash)
+              if assoc_object[:class_name] =~ /ss$/
+                assoc_object[:class_name] = assoc_object[:class_name].camelize.constantize
+                assoc_object[:object_name] = assoc_object[:object_name].camelize
+              else
+                assoc_object[:class_name] = assoc_object[:class_name].camelize.singularize.constantize
+                assoc_object[:object_name] = assoc_object[:object_name].camelize.singularize
+              end
+            else
+              if assoc_object =~ /ss$/
+                assoc_object = assoc_object.camelize.constantize
+              else
+                assoc_object = assoc_object.camelize.singularize.constantize
+              end
             end
             @klasses << assoc_object
           end
@@ -31,38 +46,50 @@ module ClientValidation
 
         # Gererating the jQuery Validator code
         @klasses.each do |klass|
-          @klass = klass
-
-          @klass.reflect_on_all_validations.each do |v|
-            @v = v
-            prefix = @klass.model_name.singular
-
-            attribute_name = v.name unless v.macro == :validates_confirmation_of
-            attribute_name = "#{v.name}_confirmation" if v.macro == :validates_confirmation_of
-
-            @translate_message_key = "#{prefix}.#{v.name}"
-
-            if object.class.model_name.singular == prefix
-              @field_name = "#{prefix}[#{attribute_name}]"
-              @field_id = "#{prefix}_#{attribute_name}"
-            else
-              prefix = "#{prefix}_attributes"
-
-              @field_name = "#{object.class.model_name.singular}[#{prefix}][#{attribute_name}]"
-              @field_id = "#{object.class.model_name.singular}_#{prefix}_#{attribute_name}"
-            end
-            @validators[@field_name] = {} unless @validators[@field_name]
-            @messages[@field_name] = {} unless @messages[@field_name]
-
-            # Set validation
-            unless v.options[:allow_nil] && v.options[:allow_blank]
-              @validators[@field_name]['required'] = true
-              @messages[@field_name]['required'] = ClientValidation::Util.message_for(@translate_message_key, :blank)
-            end
-            eval("self.set_#{v.macro.to_s}")
+          if klass.is_a?(Hash)
+            self.generate_validations(object, klass[:class_name], klass[:object_name])
+          else
+            self.generate_validations(object, klass)
           end
         end
         [@declarations, {:rules => @validators, :messages => @messages}]
+      end
+
+      def self.generate_validations(object, klass, object_name = nil)
+        @klass = klass
+        @klass.reflect_on_all_validations.each do |v|
+          @v = v
+
+          if object_name.nil?
+            prefix = @klass.model_name.singular
+          else
+            prefix = object_name.underscore
+          end
+
+          attribute_name = v.name unless v.macro == :validates_confirmation_of
+          attribute_name = "#{v.name}_confirmation" if v.macro == :validates_confirmation_of
+
+          @translate_message_key = "#{prefix}.#{v.name}"
+
+          if object.class.model_name.singular == prefix
+            @field_name = "#{prefix}[#{attribute_name}]"
+            @field_id = "#{prefix}_#{attribute_name}"
+          else
+            prefix = "#{prefix}_attributes"
+
+            @field_name = "#{object.class.model_name.singular}[#{prefix}][#{attribute_name}]"
+            @field_id = "#{object.class.model_name.singular}_#{prefix}_#{attribute_name}"
+          end
+          @validators[@field_name] = {} unless @validators[@field_name]
+          @messages[@field_name] = {} unless @messages[@field_name]
+
+          # Set validation
+          unless v.options[:allow_nil] && v.options[:allow_blank]
+            @validators[@field_name]['required'] = true
+            @messages[@field_name]['required'] = ClientValidation::Util.message_for(@translate_message_key, :blank)
+          end
+          eval("self.set_#{v.macro.to_s}")
+        end
       end
 
       def self.set_validates_acceptance_of
