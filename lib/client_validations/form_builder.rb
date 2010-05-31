@@ -19,8 +19,12 @@ module ClientValidation
 
       template ||= @template
 
-      html = template.content_tag(:script, js, :type => "text/javascript")
-      html.respond_to?(:html_safe!) ? html.html_safe! : html
+      if "".respond_to?(:html_safe)
+        html = template.content_tag(:script, js.html_safe, :type => "text/javascript").html_safe
+      else
+        html = template.content_tag(:script, js, :type => "text/javascript")
+      end
+      html
     end
   end
 end
