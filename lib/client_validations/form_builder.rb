@@ -1,10 +1,14 @@
 module ClientValidation
   module FormBuilder
-    def client_validations
-      if object.new_record?
-        form_id = "new_#{object.class.model_name.singular}"
+    def client_validations(custom_form_id = nil)
+      unless custom_form_id
+        if object.new_record?
+          form_id = "new_#{object.class.model_name.singular}"
+        else
+          form_id = "edit_#{object.class.model_name.singular}_#{object.to_param}"
+        end
       else
-        form_id = "edit_#{object.class.model_name.singular}_#{object.to_param}"
+        form_id = custom_form_id
       end
       declarations, validations = ClientValidation.current_adapter.render_script(object)
       js = <<-EOF
