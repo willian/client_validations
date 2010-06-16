@@ -132,7 +132,7 @@ module ClientValidation
       def self.set_validates_format_of
         regex = @v.options[:with].inspect.gsub(/(.*)\/.*$/, '\1/')
         message = ClientValidation::Util.message_for(@translate_message_key, :invalid)
-        add_custom_rule(@field_name, Digest::SHA1.hexdigest(regex.inspect), "return #{regex}.test(value)", message)
+        add_custom_rule(@field_name, Digest::SHA1.hexdigest("#{@field_name}_#{regex.inspect}"), "return #{regex}.test(value)", message)
       end
 
       def self.set_validates_length_of
